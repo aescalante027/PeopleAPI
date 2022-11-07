@@ -19,12 +19,9 @@ class MySQLConnector:
         return json_data
 
     def addNewPerson(self, person: Person):
-        query = "INSERT INTO people(id, lastname, firstname, age) VALUES (" + str(person.id) + ", \"" + \
-                person.lastname + "\", \"" + \
-                person.firstname + "\", " + \
-                str(person.age) + ");"
-        print(query)
-        cur.execute(query)
+        query = "INSERT INTO people(id, lastname, firstname, age) VALUES (%s, %s, %s, %s);"
+        val = (person.id, person.lastname, person.firstname, person.age)
+        cur.execute(query, val)
         db.commit()
 
     def updatePersonLastName(self, person: Person, lastname: str):
