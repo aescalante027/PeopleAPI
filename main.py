@@ -31,7 +31,7 @@ def addNewPerson():
     id = None
     newPerson = Person(id, data["lastname"], data["firstname"], data["age"])
     mysql.addNewPerson(newPerson)
-    return jsonify(mysql.getPersonById(id))
+    return jsonify(mysql.getPeopleData())
 
 
 @app.route('/person/delete/<int:id>', methods=['DELETE'])
@@ -40,13 +40,13 @@ def removePerson(id):
     return jsonify(mysql.getPeopleData())
 
 
-@app.route('/person/update/<int:id>/age/<int:age>', methods=['PUT'])
+@app.route('/person/<int:id>/age/<int:age>', methods=['PUT'])
 def changeAge(id, age):
     mysql.updateAge(id, age)
     return jsonify(mysql.getPersonById(id))
 
 
-@app.route('/person/update/<int:id>/lastname/<lastname>', methods=['PUT'])
+@app.route('/person/<int:id>/lastname/<lastname>', methods=['PUT'])
 def changeLastName(id, lastname):
     mysql.updatePersonLastName(id, lastname)
     return jsonify(mysql.getPersonById(id))
