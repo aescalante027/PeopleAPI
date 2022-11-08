@@ -7,7 +7,6 @@ from Controllers.MySQLConnector import MySQLConnector
 # Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
 
 app = Flask(__name__)
-memory: dict[int, Person] = {}
 mysql = MySQLConnector("settings.csv")
 
 
