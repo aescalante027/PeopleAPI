@@ -1,1 +1,5 @@
+# Ignoring files
+settings.csv
+
+# Ignoring dirs
 .idea/
