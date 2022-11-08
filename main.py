@@ -1,5 +1,5 @@
 # This is a sample Python script.
-from flask import Flask, jsonify, request
+from flask import Flask, jsonify, request, abort
 from DataModels.Person import Person
 from Controllers.MySQLConnector import MySQLConnector
 
@@ -8,55 +8,53 @@ from Controllers.MySQLConnector import MySQLConnector
 
 app = Flask(__name__)
 memory: dict[int, Person] = {}
-mysql = MySQLConnector()
+mysql = MySQLConnector("settings.csv")
 
-@app.route('/all', methods=['GET'])
+
+@app.route('/person/all', methods=['GET'])
 def printAllUsers():
+    data = mysql.getPeopleData()
+    memory = {"data": data}
     return jsonify(memory)
 
-@app.route('/add', methods=['POST'])
+
+@app.route('/person/<int:id>', methods=['GET'])
+def getPersonById(id):
+    result = mysql.getPersonById(id)
+    if result == None:
+        abort(400)
+    return jsonify(result)
+
+
+@app.route('/person/add', methods=['POST'])
 def addNewPerson():
     data = request.json
-    id = len(memory)
-    while id in memory:
-        id += 1
+    id = None
     newPerson = Person(id, data["lastname"], data["firstname"], data["age"])
-    memory[id] = newPerson
     mysql.addNewPerson(newPerson)
-    return jsonify(memory)
+    return jsonify(mysql.getPersonById(id))
 
-@app.route('/delete/<int:id>', methods=['DELETE'])
+
+@app.route('/person/delete/<int:id>', methods=['DELETE'])
 def removePerson(id):
-    if id in memory:
-        memory.pop(id, None)
-        mysql.removePerson(id)
-    return jsonify(memory)
+    mysql.removePerson(id)
+    return jsonify(mysql.getPeopleData())
 
-@app.route('/update/<int:id>/age/<int:age>', methods=['PUT'])
+
+@app.route('/person/update/<int:id>/age/<int:age>', methods=['PUT'])
 def changeAge(id, age):
-    if id in memory:
-        person = memory[id]
-        person.age = age
-        memory[id] = person
-        mysql.updateAge(person, age)
-    return jsonify(memory)
+    mysql.updateAge(id, age)
+    return jsonify(mysql.getPersonById(id))
 
-@app.route('/update/<int:id>/lastname/<lastname>', methods=['PUT'])
+
+@app.route('/person/update/<int:id>/lastname/<lastname>', methods=['PUT'])
 def changeLastName(id, lastname):
-    if id in memory:
-        person = memory[id]
-        person.lastname = lastname
-        memory[id] = person
-        mysql.updatePersonLastName(person, lastname)
-        return jsonify(memory[id])
-    return jsonify(None)
+    mysql.updatePersonLastName(id, lastname)
+    return jsonify(mysql.getPersonById(id))
 
-# Press the green button in the gutter to run the script.
+
 if __name__ == '__main__':
-    data = mysql.getPeopleData()
-    for x in range(0,len(data)):
-        person = Person(**data[x])
-        memory[x] = person
+    app.config['JSONIFY_PRETTYPRINT_REGULAR'] = True
     app.run(debug=True)
 
 # See PyCharm help at https://www.jetbrains.com/help/pycharm/
