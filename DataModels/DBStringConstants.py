@@ -1,4 +1,4 @@
-class QueryStringConstants:
+class DBStringConstants:
 
     getAllPeople = "SELECT * FROM people"
     getPersonById = "SELECT * FROM people WHERE id = %s"

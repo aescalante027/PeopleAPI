@@ -1,11 +1,11 @@
 import MySQLdb
 import pandas as pd
 from MySQLdb.cursors import Cursor
-from DataModels.QueryStringConstants import QueryStringConstants as qsc
+from DataModels.DBStringConstants import DBStringConstants as dbsc
 from DataModels.Person import Person
 
 
-class MySQLConnector:
+class PersonController:
     db: MySQLdb = None
     cur: Cursor
 
@@ -20,7 +20,7 @@ class MySQLConnector:
         self.cur = self.db.cursor()
 
     def getPeopleData(self):
-        self.cur.execute(qsc.getAllPeople)
+        self.cur.execute(dbsc.getAllPeople)
         row_headers = [x[0] for x in self.cur.description]
         rv = self.cur.fetchall()
         json_data = []
@@ -30,31 +30,31 @@ class MySQLConnector:
 
     def addNewPerson(self, person: Person):
         val = (person.id, person.lastname, person.firstname, person.age)
-        self.cur.execute(qsc.addNewPerson, val)
+        self.cur.execute(dbsc.addNewPerson, val)
         self.db.commit()
 
     def updatePersonLastName(self, id: int, lastname: str):
         val = (lastname, id)
-        self.cur.execute(qsc.updateLastName, val)
+        self.cur.execute(dbsc.updateLastName, val)
         self.db.commit()
 
     def updateAge(self, id: int, age: int):
         val = (age, id)
-        self.cur.execute(qsc.updateAge, val)
+        self.cur.execute(dbsc.updateAge, val)
         self.db.commit()
 
     def removePerson(self, id: int):
         val = (str(id))
-        self.cur.execute(qsc.delete, val)
+        self.cur.execute(dbsc.delete, val)
         self.db.commit()
 
     def getPersonById(self, id: int):
         val = (str(id))
         try:
-            self.cur.execute(qsc.getPersonById, val)
+            self.cur.execute(dbsc.getPersonById, val)
         except MySQLdb.Error as e:
             print(e)
-            print(qsc.getPersonById + " (id = " + str(id) + ")")
+            print(dbsc.getPersonById + " (id = " + str(id) + ")")
             return None
         row_headers = [x[0] for x in self.cur.description]
         rv = self.cur.fetchall()
