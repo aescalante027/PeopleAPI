@@ -1,4 +1,4 @@
-# flaskPeopleAPI
+# PeopleAPI
 -------
 
 Purpose: A REST API using basic people data, backed up by a MySQL db (schema currently not included)
