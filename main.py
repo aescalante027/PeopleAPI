@@ -18,7 +18,7 @@ def print_all_users():
 async def get_person_by_id(id):
     result = personController.getPersonById(id)
     if result is None:
-        raise HTTPException(status_code=404, detail="User not found")
+        raise HTTPException(status_code=400, detail="User not found of id " + str(id))
     return result
 
 
